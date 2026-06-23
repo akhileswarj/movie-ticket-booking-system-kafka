@@ -1,0 +1,31 @@
+networks:
+  kafka-network:
+    name: kafka-network
+    external: true
+
+services:
+  init-kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    container_name: init-kafka
+    networks:
+      - kafka-network
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: >
+      "
+      echo 'Waiting for Kafka to be ready...' &&
+      until kafka-topics --bootstrap-server kafka-broker-1:9092 --list > /dev/null 2>&1; do
+        echo 'Kafka not ready yet, retrying in 5s...' &&
+        sleep 5;
+      done &&
+
+      echo 'Deleting existing topics (if any)...' &&
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --topic payment-request --delete --if-exists &&
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --topic payment-response --delete --if-exists &&
+
+      echo 'Creating topics...' &&
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic payment-request --replication-factor 3 --partitions 3 &&
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --create --if-not-exists --topic payment-response --replication-factor 3 --partitions 3 &&
+
+      echo 'Topics created successfully:' &&
+      kafka-topics --bootstrap-server kafka-broker-1:9092 --list
+      "

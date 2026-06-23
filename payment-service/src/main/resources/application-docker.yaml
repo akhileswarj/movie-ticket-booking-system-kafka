@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST_PAYMENT}:3306/payments?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME_PAYMENT}
+    password: ${DB_PASSWORD_PAYMENT}
+
+services:
+  booking:
+    url: ${SERVICES_BOOKING_URL}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://movie-services-registry:8761/eureka/
+
+razorpay:
+  callback-url: http://localhost:8765/payments

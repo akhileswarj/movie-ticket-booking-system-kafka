@@ -1,0 +1,33 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: jdbc:mysql://${DB_HOST_PAYMENT:localhost}:3306/payments?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME_PAYMENT:springstudent}
+    password: ${DB_PASSWORD_PAYMENT:springstudent}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  kafka:
+    bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: payment-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+services:
+  booking:
+    url: http://localhost:8080
+
+razorpay:
+  key-id: rzp_test_SmYXviKVvRzDs8
+  key-secret: Sg3IER4O7MzU79dlTfyP5amM
+  callback-url: http://localhost:8765/payments

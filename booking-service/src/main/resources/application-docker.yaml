@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST_BOOKING}:3306/bookings?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME_BOOKING}
+    password: ${DB_PASSWORD_BOOKING}
+
+services:
+  payment:
+    url: ${SERVICES_PAYMENT_URL}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://movie-services-registry:8761/eureka/

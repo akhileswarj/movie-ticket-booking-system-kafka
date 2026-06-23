@@ -1,0 +1,60 @@
+server:
+  port: 8765
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: booking-service
+              uri: lb://booking-service
+              predicates:
+                - Path=/bookings/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: booking-route
+                    fallbackUri: forward:/booking-fallback
+
+            - id: payment-service
+              uri: lb://payment-service
+              predicates:
+                - Path=/payments/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    id: payment-route
+                    fallbackUri: forward:/payment-fallback
+
+    loadbalancer:
+      eager-load:
+        enabled: true
+        clients:
+          - booking-service
+          - payment-service
+
+resilience4j:
+  timelimiter:
+    instances:
+      booking-route:
+        timeoutDuration: 30s   # ← Razorpay takes ~7s, give plenty of headroom
+      payment-route:
+        timeoutDuration: 30s
+  circuitbreaker:
+    instances:
+      booking-route:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+      payment-route:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/

@@ -1,0 +1,28 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: booking-service
+  datasource:
+    url: jdbc:mysql://${DB_HOST_BOOKING:localhost}:3306/bookings?createDatabaseIfNotExist=true
+    username: ${DB_USERNAME_BOOKING:springstudent}
+    password: ${DB_PASSWORD_BOOKING:springstudent}
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  kafka:
+    bootstrap-servers: localhost:19092,localhost:29092,localhost:39092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: booking-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+
+services:
+  payment:
+    url: http://localhost:9090/payments

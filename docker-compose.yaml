@@ -1,0 +1,82 @@
+services:
+  bookingsdb:
+    image: mysql
+    container_name: bookingsdbcontainer
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pbookings"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    ports:
+      - '3308:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: bookings
+      MYSQL_DATABASE: bookings
+
+  paymentsdb:
+    image: mysql
+    container_name: paymentsdbcontainer
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppayments"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    ports:
+      - '3309:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: payments
+      MYSQL_DATABASE: payments
+
+  movie-services-registry:
+    image: movie-services-registry
+    container_name: movie-services-registry
+    build: ./movie.services.registry
+    ports:
+      - '8761:8761'
+
+  booking-service:
+    image: booking-service
+    container_name: bookingscontainer
+    build: ./booking-service
+    depends_on:
+      bookingsdb:
+        condition: service_healthy
+#    ports:
+#      - '8080:8080'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST_BOOKING: bookingsdb
+      DB_USERNAME_BOOKING: root
+      DB_PASSWORD_BOOKING: bookings
+      SERVICES_PAYMENT_URL: http://payment-service:9090/payments
+
+  payment-service:
+    image: payment-service
+    container_name: paymentscontainer
+    build: ./payment-service
+    depends_on:
+      paymentsdb:
+        condition: service_healthy
+#    ports:
+#      - '9090:9090'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_HOST_PAYMENT: paymentsdb
+      DB_USERNAME_PAYMENT: root
+      DB_PASSWORD_PAYMENT: payments
+      SERVICES_BOOKING_URL: http://booking-service:8080
+
+
+  api-gateway:
+    image: api-gateway
+    container_name: api-gateway
+    build: ./api-gateway
+    ports:
+      - '8765:8765'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      movie-services-registry:
+        condition: service_started
