@@ -1,10 +1,25 @@
-target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 *.jar
 *.war
 *.class
+
+# Kafka/Zookeeper data
+infrastructure/volumes/
+
+# Logs
+*.log
+
+# Build files
+target/
+
+# IDE files
+.idea/
+*.iml
+
+# OS files
+.DS_Store
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
