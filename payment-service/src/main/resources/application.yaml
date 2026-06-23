@@ -6,8 +6,8 @@ spring:
     name: payment-service
   datasource:
     url: jdbc:mysql://${DB_HOST_PAYMENT:localhost}:3306/payments?createDatabaseIfNotExist=true
-    username: ${DB_USERNAME_PAYMENT:springstudent}
-    password: ${DB_PASSWORD_PAYMENT:springstudent}
+    username: ${DB_USERNAME_PAYMENT:your_db_username}
+    password: ${DB_PASSWORD_PAYMENT:your_db_password}
   jpa:
     hibernate:
       ddl-auto: update
@@ -28,6 +28,6 @@ services:
     url: http://localhost:8080
 
 razorpay:
-  key-id: rzp_test_SmYXviKVvRzDs8
-  key-secret: Sg3IER4O7MzU79dlTfyP5amM
+  key-id: your_razorpay_key_id
+  key-secret: your_razorpay_key_secret
   callback-url: http://localhost:8765/payments
