@@ -101,7 +101,7 @@ Client (Postman / Frontend)
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/movie-ticket-booking-system.git
+git clone https://github.com/akhileswarj/movie-ticket-booking-system-kafka.git
 cd movie-ticket-booking-system
 ```
 
@@ -133,8 +133,6 @@ docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 Expected containers: `zookeeper`, `kafka-broker-1`, `kafka-broker-2`, `kafka-broker-3`, `schema-registry`, `kafka-manager`
 
 ### 3. Configure environment variables
-
-Set these in each service's **IntelliJ Run Configuration → Environment Variables** (or export in terminal):
 
 **razorpay credentials:**
 update the payment-service environment variables:
